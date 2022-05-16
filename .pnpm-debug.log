@@ -1,0 +1,35 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 info pnpm": {
+    "err": {
+      "name": "Error",
+      "message": "Command failed with ENOENT: @eslint/create-config\nspawn @eslint/create-config ENOENT",
+      "code": "ENOENT",
+      "stack": "Error: Command failed with ENOENT: @eslint/create-config\nspawn @eslint/create-config ENOENT\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:283:19)\n    at onErrorNT (node:internal/child_process:478:16)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21)"
+    }
+  },
+  "2 error pnpm": {
+    "errno": -2,
+    "code": "ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL",
+    "syscall": "spawn @eslint/create-config",
+    "path": "@eslint/create-config",
+    "spawnargs": [],
+    "originalMessage": "spawn @eslint/create-config ENOENT",
+    "shortMessage": "Command failed with ENOENT: @eslint/create-config\nspawn @eslint/create-config ENOENT",
+    "command": "@eslint/create-config",
+    "escapedCommand": "\"@eslint/create-config\"",
+    "failed": true,
+    "timedOut": false,
+    "isCanceled": false,
+    "killed": false,
+    "prefix": "/Users/sylvain/geek/fiverr/brimecho",
+    "err": {
+      "name": "pnpm",
+      "message": "Command failed with ENOENT: @eslint/create-config\nspawn @eslint/create-config ENOENT",
+      "code": "ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL",
+      "stack": "Error: Command failed with ENOENT: @eslint/create-config\nspawn @eslint/create-config ENOENT\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:283:19)\n    at onErrorNT (node:internal/child_process:478:16)\n    at processTicksAndRejections (node:internal/process/task_queues:83:21)"
+    }
+  }
+}

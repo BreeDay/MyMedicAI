@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Patient details</title>
+    <style>
+      @import url("https://rsms.me/inter/inter.css");
+      html {
+        font-family: "Inter", sans-serif;
+      }
+      @supports (font-variation-settings: normal) {
+        html {
+          font-family: "Inter var", sans-serif;
+        }
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: #e5e4e2;
+      }
+
+      html {
+        box-sizing: border-box;
+      }
+
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      .red {
+        color: red;
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        height: inherit;
+        justify-content: center;
+      }
+
+      .box {
+        width: 800px;
+      }
+
+      .boxHeader {
+        border-top: 1px solid darkgray;
+        border-left: 1px solid darkgray;
+        border-right: 1px solid darkgray;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        padding: 20px 20px;
+        padding-bottom: 10px;
+        background-color: #40b5ad;
+        color: white;
+      }
+
+      form {
+        padding: 20px 20px;
+        padding-top: 10px;
+        border-bottom: 1px solid darkgray;
+        border-left: 1px solid darkgray;
+        border-right: 1px solid darkgray;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        background-color: white;
+      }
+
+      .headerMain {
+        font-size: 2rem;
+        font-weight: bold;
+      }
+
+      .formGroup {
+        margin-bottom: 15px;
+      }
+      .formGroupLabel {
+        font-weight: bold;
+      }
+      .formGroupTwoColsContainer {
+        display: flex;
+        column-gap: 20px;
+      }
+
+      .formGroupOneColContainer {
+        text-align: center;
+      }
+
+      label {
+        display: block;
+      }
+
+      .formGroupCol {
+        flex: 1 1 auto;
+      }
+
+      input[type="text"],
+      textarea {
+        border: 1px solid darkgray;
+        padding: 0.5em;
+        width: 100%;
+      }
+
+      input[type="submit"] {
+        background-color: #40b5ad;
+        color: white;
+        border: none;
+        padding: 1em 5em;
+      }
+
+      label {
+        color: darkgray;
+        font-size: 0.8em;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="box">
+        <div class="boxHeader">
+          <div class="headerMain">Patient details</div>
+          <div class="headerSecondary">
+            Record of a patient's medical details
+          </div>
+        </div>
+        <form action="/api/user" method="POST">
+          <div class="formGroup">
+            <div class="formGroupLabel">Name<span class="red">*</span></div>
+            <div class="formGroupTwoColsContainer">
+              <div class="formGroupCol">
+                <input id="first" name="first" type="text" />
+                <label for="first">First</label>
+              </div>
+              <div class="formGroupCol">
+                <input id="last" name="last" type="text" />
+                <label for="last">Last</label>
+              </div>
+            </div>
+          </div>
+          <div class="formGroup">
+            <div class="formGroupLabel">
+              Date of birth<span class="red">*</span>
+            </div>
+            <div class="formGroupOneColContainer">
+              <input name="dob" type="text" />
+            </div>
+          </div>
+          <div class="formGroup">
+            <div class="formGroupLabel">
+              Medical condition<span class="red">*</span>
+            </div>
+            <div class="formGroupOneColContainer">
+              <textarea name="condition" rows="5"></textarea>
+            </div>
+          </div>
+          <div class="formGroup">
+            <div class="formGroupLabel">
+              Allergies<span class="red">*</span>
+            </div>
+            <div class="formGroupOneColContainer">
+              <textarea name="allergies" rows="5"></textarea>
+            </div>
+          </div>
+          <div class="formGroup">
+            <div class="formGroupLabel">
+              Emergency contact<span class="red">*</span>
+            </div>
+            <div class="formGroupOneColContainer">
+              <input name="emergency" type="text" />
+            </div>
+          </div>
+          <div class="formGroup">
+            <div class="formGroupOneColContainer">
+              <input type="submit" value="Submit" />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      const handle_submit = async (e) => {
+        e.preventDefault();
+
+        const data = new FormData(form);
+        for (const [, v] of data.entries()) {
+          if (v === "") {
+            alert("Please fill all values.");
+            return;
+          }
+        }
+        const params = new URLSearchParams(data);
+
+        const response = await fetch(form.action, {
+          method: form.method,
+          headers: {
+            accept: "application/json",
+          },
+          body: params,
+        });
+
+        if (response.ok) {
+          window.location = "/success.html";
+        } else {
+          console.error(await response.text());
+        }
+      };
+
+      /* fetch patient details and populate form with it */
+      const populate_form = async () => {
+        const response = await fetch(form.action, {
+          headers: {
+            accept: "application/json",
+          },
+        });
+
+        const patientDetails = await response.json();
+        for (const [k, v] of Object.entries(patientDetails)) {
+          form.elements[k].value = v;
+        }
+      };
+
+      const form = document.querySelector("form");
+      const edit = new URLSearchParams(document.location.search).get("edit");
+      if (edit) {
+        populate_form();
+      }
+
+      form.addEventListener("submit", handle_submit);
+    </script>
+  </body>
+</html>

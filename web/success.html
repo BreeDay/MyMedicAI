@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Patient details</title>
+    <style>
+      @import url("https://rsms.me/inter/inter.css");
+      html {
+        font-family: "Inter", sans-serif;
+      }
+      @supports (font-variation-settings: normal) {
+        html {
+          font-family: "Inter var", sans-serif;
+        }
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: #e5e4e2;
+      }
+
+      html {
+        box-sizing: border-box;
+      }
+
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+
+      .red {
+        color: red;
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        height: inherit;
+        justify-content: center;
+      }
+
+      .box {
+        width: 800px;
+      }
+
+      .boxHeader {
+        border-top: 1px solid darkgray;
+        border-left: 1px solid darkgray;
+        border-right: 1px solid darkgray;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        padding: 20px 20px;
+        padding-bottom: 10px;
+        background-color: #40b5ad;
+        color: white;
+      }
+
+      form,
+      .form {
+        padding: 35px 35px;
+        padding-top: 10px;
+        border-bottom: 1px solid darkgray;
+        border-left: 1px solid darkgray;
+        border-right: 1px solid darkgray;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        background-color: white;
+      }
+
+      #countdown {
+        display: none;
+        margin-top: 15px;
+      }
+
+      #information {
+        display: none;
+        margin-top: 15px;
+      }
+
+      .headerMain {
+        font-size: 2rem;
+        font-weight: bold;
+      }
+
+      .formGroup {
+        margin-bottom: 15px;
+      }
+      .formGroupLabel {
+        font-weight: bold;
+      }
+      .formGroupTwoColsContainer {
+        display: flex;
+        column-gap: 20px;
+      }
+
+      .formGroupOneColContainer {
+        text-align: center;
+      }
+
+      label {
+        display: block;
+      }
+
+      .formGroupCol {
+        flex: 1 1 auto;
+      }
+
+      input[type="text"],
+      textarea {
+        width: 100%;
+      }
+
+      #edit {
+        background-color: #40b5ad;
+        color: white;
+        border: none;
+        padding: 1em 5em;
+      }
+
+      #show,
+      #cancel {
+        background-color: #40b5ad;
+        color: white;
+        border: none;
+        position: absolute;
+        left: 50%;
+        }
+
+      label {
+        color: darkgray;
+        font-size: 0.8em;
+      }
+
+      .details {
+        font-style: italic;
+      }
+      .red{
+        color: red;
+        left: 50%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="box">
+        <div class="boxHeader">
+          <div class="headerMain">Patient details</div>
+          <div class="headerSecondary">
+            Record of a patient's medical details
+          </div>
+        </div>
+        <div class="form">
+          <div class="red">
+            This page is only for medical professionals<br/><br/><br/><input
+              type="button"
+              id="show"
+              value="At Hospital"
+            />
+          </div>
+          <div id="countdown">
+            My MedicAI has been activated. Details will be revealed in
+            <span id="timer">10 seconds</span> if not deactivated.<br/><br/><br/><input
+              type="button"
+              id="cancel"
+              value="cancel"
+            />
+          </div>
+          <div id="information">
+            <div class="formGroup">
+              <div class="formGroupLabel">Name</div>
+              <div class="details">
+                <span id="name"></span>
+              </div>
+            </div>
+            <div class="formGroup">
+              <div class="formGroupLabel">Date of birth</div>
+              <div class="details">
+                <span id="dob"></span>
+              </div>
+            </div>
+            <div class="formGroup">
+              <div class="formGroupLabel">Medical condition</div>
+              <div class="details">
+                <span id="condition"></span>
+              </div>
+            </div>
+            <div class="formGroup">
+              <div class="formGroupLabel">Allergies</div>
+              <div class="details">
+                <span id="allergies"></span>
+              </div>
+            </div>
+            <div class="formGroup">
+              <div class="formGroupLabel">Emergency contact</div>
+              <div class="details">
+                <span id="emergency"></span>
+              </div>
+            </div>
+            <div class="formGroup">
+              <div class="formGroupOneColContainer">
+                <input type="button" id="edit" value="Edit this information" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const handle_edit = () => {
+        window.location = "/?edit=true";
+      };
+      const populate_fields = async () => {
+        const response = await fetch("/api/user", {
+          headers: {
+            accept: "application/json",
+          },
+        });
+
+        const patientDetails = await response.json();
+        console.log(patientDetails);
+        document.getElementById(
+          "name"
+        ).innerText = `${patientDetails.first} ${patientDetails.last}`;
+        document.getElementById("dob").innerText = patientDetails.dob;
+        document.getElementById("condition").innerText = patientDetails.condition;
+        document.getElementById("allergies").innerText = patientDetails.allergies;
+        document.getElementById("emergency").innerText = patientDetails.emergency;
+      };
+
+      const wait = async (ms) => {
+        return new Promise((resolve) => {
+          setTimeout(resolve, ms);
+        });
+      };
+
+      const handle_show = async () => {
+        if (showInformation) {
+          document.getElementById("information").style.display = "none";
+          showButton.value = "At Hospital";
+          showInformation = false;
+        } else {
+          cancelled = false;
+          showButton.style.display = "none";
+          let i;
+          const countdownDiv = document.getElementById("countdown");
+          countdownDiv.style.display = "block";
+          const timerSpan = document.getElementById("timer");
+          timerSpan.innerText = "10 seconds";
+          for (i = 9; i >= 0; i--) {
+            if (cancelled) {
+              return;
+            }
+            await wait(1000);
+            timerSpan.innerText = i + (i > 1 ? " seconds" : " second");
+          }
+          showButton.style.display = "inline-block";
+          countdownDiv.style.display = "none";
+          document.getElementById("information").style.display = "block";
+          showButton.value = "close";
+          showInformation = true;
+        }
+      };
+
+      const handle_cancel = () => {
+        cancelled = true;
+        showButton.style.display = "inline-block";
+        const countdownDiv = document.getElementById("countdown");
+        countdownDiv.style.display = "none";
+      };
+
+      populate_fields();
+
+      const editButton = document.getElementById("edit");
+      editButton.addEventListener("click", handle_edit);
+
+      let showInformation = false;
+      const showButton = document.getElementById("show");
+      showButton.addEventListener("click", handle_show);
+
+      let cancelled = false;
+      const cancelButton = document.getElementById("cancel");
+      cancelButton.addEventListener("click", handle_cancel);
+    </script>
+  </body>
+</html>
